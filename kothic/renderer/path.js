@@ -27,7 +27,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 Kothic.path = (function () {
 	var dashPattern;
 
-	function setDashPattern(point, dashes) {
+	// this will match any IE up to and including IE 10, which are exactly
+	// those who not support setLineDash()
+	if (navigator.appName === "Microsoft Internet Explorer") {
+	function setDashPattern(ctx, point, dashes) {
 		dashPattern = {
 			pattern: dashes,
 			seg: 0,
@@ -72,6 +75,18 @@ Kothic.path = (function () {
 		pt.y = point[1];
 
 		ctx.restore();
+	}
+	} else {
+		function setDashPattern(ctx, point, dashes) {
+			if (dashes)
+				ctx.setLineDash(dashes);
+			else
+				ctx.setLineDash([]);
+		}
+
+		function dashTo(ctx, point) {
+			ctx.lineTo(point[0], point[1]);
+		}
 	}
 
 	// check if the point is on the tile boundary
@@ -163,7 +178,7 @@ Kothic.path = (function () {
 
 					if (j === 0) {
 						ctx.moveTo(screenPoint[0], screenPoint[1]);
-						setDashPattern(screenPoint, dashes);
+						setDashPattern(ctx, screenPoint, dashes);
 					} else if (dashes) {
 						dashTo(ctx, screenPoint);
 					} else {
@@ -184,7 +199,7 @@ Kothic.path = (function () {
 
 						if (j === 0) {
 							ctx.moveTo(screenPoint[0], screenPoint[1]);
-							setDashPattern(screenPoint, dashes);
+							setDashPattern(ctx, screenPoint, dashes);
 						} else if (!fill && checkSameBoundary(point, prevPoint, granularity)) {
 							ctx.moveTo(screenPoint[0], screenPoint[1]);
 							dashPattern.x = screenPoint[0];
