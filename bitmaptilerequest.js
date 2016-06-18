@@ -35,11 +35,11 @@ BitmapTilerequest = function(self)
 BitmapTilerequest.prototype =
 {
 	// save the rendered image to disk and send it to the client
-	renderCallback: function(err, image)
+	renderCallback: function(image)
 	{
 		var self = this;
 
-		if (err)
+		if (!image)
 			self.tile.debug('Vectortile was empty.');
 
 		self.tile.saveBitmapData(image, function(err)
@@ -166,14 +166,14 @@ BitmapTilerequest.prototype =
 								if (data.features.length === 0)
 								{
 									self.tile.debug('Vector tile without features, serving empty PNG tile for style ' + self.tile.style);
-									self.renderCallback(true, null);
+									self.renderCallback(null);
 								}
 								else
 								{
 									self.tile.debug('Rendering bitmap tile with style ' + self.tile.style);
-									self.tile.render(function(err, image)
+									self.tile.render(function(image)
 									{
-										self.renderCallback(err, image);
+										self.renderCallback(image);
 									});
 								}
 							});
@@ -191,9 +191,9 @@ BitmapTilerequest.prototype =
 								self.queue.add(self.tile);
 
 							self.tile.debug('Rendering bitmap tile with style '+self.tile.style);
-							self.tile.render(function(err, image)
+							self.tile.render(function(image)
 							{
-								self.renderCallback(err, image);
+								self.renderCallback(image);
 							});
 						});
 					}

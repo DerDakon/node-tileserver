@@ -310,7 +310,7 @@ Tile.prototype =
 				self.debug('Finished rendering bitmap tile.');
 				return process.nextTick(function()
 				{
-					callback(false, canvas);
+					callback(canvas);
 				});
 			}
 		});
@@ -548,17 +548,8 @@ Tile.prototype =
 		this.trace('MapCSS style loaded.');
 		var filepath = configuration.tiledir+'/'+this.style+'/'+this.z+'/'+this.x;
 		var self = this;
-		this.render(function(err, image)
+		this.render(function(image)
 		{
-			if (err)
-			{
-				self.warn('Bitmap tile could not be rendered. Returning.');
-				self.rerenderBitmap(selectedStyle+1);
-				self = null;
-				image = null;
-				return;
-			}
-
 			self.debug('Bitmap tile successfully rendered.');
 			self.debug('Creating path '+filepath+'...');
 			mkdirp(filepath, function(err)
