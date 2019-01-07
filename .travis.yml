@@ -18,11 +18,13 @@ addons:
     - libxml2-utils
     - python-cairo
     - python-imaging
+    - python-pil
     - python-rsvg
     - python3-cairo
     - python3-gi
+    - python3-pil
 install:
- - pip install ply pillow cairocffi
+ - pip install ply
 script:
  - mkdir build
  - cd build
